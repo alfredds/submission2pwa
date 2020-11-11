@@ -93,21 +93,29 @@ function getTeamById() {
         let idParams = urlParams.get("id");
 
         if("caches" in window){
-            return caches.match(`${base_URL}/teams/${idParams}`)
-                .then(response => {
-                    if (response) {
-                        response.json().then(squads => {
-                            console.log(`Club Team Data : ${squads}`)
-                                showTeamById(squads);
+            return caches
+            .match(`${base_URL}/teams/${idParams}`)
+            .then(response => {
+                console.log(response)
+                if (response) {
+                    console.log(response);
+                    return response.json()
+                    .then(squads => {
+                        console.log('From cache')
+                        console.log(squads);
+                        showTeamById(squads);
+                        return Promise.resolve(squads);
+                })
+                } else {
+                    return fetchAPI(`${base_URL}/teams/${idParams}`)
+                    .then(squad => {
+                        console.log('From Fetch');
+                        console.log(squad)
+                        showTeamById(squad);
+                        return Promise.resolve(squad);
                     })
-                    } else {
-                        return fetchAPI(`${base_URL}/teams/${idParams}`)
-                        .then(squad => {
-                            showTeamById(squad);
-                                return Promise.resolve(squad);
-                    })
-                        .catch(error => {
-                            console.log(error)
+                    .catch(error => {
+                        console.log(error)
                     })
                 }
         })
@@ -123,11 +131,11 @@ function showTeamById(squads){
     squads.squad.forEach(player =>{
         squad += ` 
                 <tr>
-                <td>${player.id}</td>
-                <td>${player.name}</td>
-                <td>${player.position}</td>
-                <td>${player.nationality}</td>
-                <td>${player.role}</td>
+                    <td>${player.id}</td>
+                    <td>${player.name}</td>
+                    <td>${player.position}</td>
+                    <td>${player.nationality}</td>
+                    <td>${player.role}</td>
                 </tr>
         `;
     });
@@ -141,7 +149,7 @@ function showTeamById(squads){
             </div>   
             <table class="striped responsive-table">
             <thead>
-                    <tr>
+                    <tr id="squad">
                         <th class="center">ID</th>
                         <th class="center">Nama</th>
                         <th class="center">Posisi</th>
@@ -251,7 +259,7 @@ function getSavedTeamById(){
 function showNotifikasiSimpan() {
     const title = 'Notifikasi Save';
     const options = {
-        'body': 'Squad Team anda berhasil di simpan',
+        'body': 'Squad team anda berhasil di simpan',
         'icon': '/icons/pwa-512.png'
     };
     if (Notification.permission === 'granted') {

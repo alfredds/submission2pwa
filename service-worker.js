@@ -20,7 +20,8 @@ const urlsToCache = [
     "/js/push.js",
     "/pages/team.html",
     "/pages/saved.html",
-    "/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2"
+    "/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2",
+    "https://fonts.googleapis.com/icon?family=Material+Icons"
 ];
 
 self.addEventListener("install", function (event) {
@@ -33,6 +34,7 @@ self.addEventListener("install", function (event) {
 });
 
 self.addEventListener("activate", function(event) {
+    clients.claim();
     event.waitUntil(
         caches.keys().then(function(cacheNames) {
             return Promise.all(
@@ -49,6 +51,8 @@ self.addEventListener("activate", function(event) {
 
 self.addEventListener("fetch", function(event) {
     const base_url = "https://api.football-data.org/v2/";
+    const online = navigator.onLine;
+
     if (event.request.url.indexOf(base_url) > -1){
         event. respondWith(
             caches.open(CACHE_NAME).then(function (cache) {

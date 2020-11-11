@@ -33,7 +33,7 @@ function dbInsert(squad){
     .then(db => {
         const tx = db.transaction("teams_save","readwrite");
         let store = tx.objectStore("teams_save");
-        console.log(squad);
+        console.log(squad)
         store.put(squad);
         return tx.complete;
     })
