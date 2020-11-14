@@ -1,3 +1,4 @@
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 const CACHE_NAME = "football-fans-apps-v2";
 
 const urlsToCache = [
@@ -18,8 +19,10 @@ const urlsToCache = [
     "/js/db.js",
     "/js/nav.js",
     "/js/push.js",
+    "/js/req.js",
     "/pages/team.html",
     "/pages/saved.html",
+    "/pages/standing.html",
     "/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2",
     "https://fonts.googleapis.com/icon?family=Material+Icons"
 ];
@@ -53,7 +56,7 @@ self.addEventListener("fetch", function(event) {
     const base_url = "https://api.football-data.org/v2/";
     const online = navigator.onLine;
 
-    if (event.request.url.indexOf(base_url) > -1){
+    if (event.request.url.indexOf(base_url) > -1 && online){
         event. respondWith(
             caches.open(CACHE_NAME).then(function (cache) {
                 return fetch(event.request).then(function(response){

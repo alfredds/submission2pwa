@@ -45,9 +45,13 @@ document.addEventListener("DOMContentLoaded", () =>{
                 let content = document.querySelector("#body-content");
                 if (this.status === 200) {
                     content.innerHTML = xhttp.responseText;
-                    if(page == 'team') {
+                    if(page === 'team') {
                         getAllTeams();
-                    } if(page === 'saved') {
+                    }
+                    if(page === 'standing') {
+                        getAllStandings();
+                    } 
+                    if(page === 'saved') {
                         getSaveTeam();
                     }
 

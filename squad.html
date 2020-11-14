@@ -24,9 +24,14 @@
         </div>
     </nav>
 
-<div class="container" id="body-content"></div>
+<div class="container" id="body-content">
+    <div class = "progress">
+        <div class = "indeterminate"></div>
+    </div>
+</div>
+
 <div class="fixed-action-btn">
-    <a class="btn-floating btn-large red" id="save">
+    <a class="btn-floating btn-large red waves-effect" id="save">
         <i class="large material-icons">save</i>
     </a>
 </div>
@@ -59,10 +64,12 @@
                 dbDelete(id)
                 icon.innerHTML = 'save'
                 showNotifikasiDelete()
+                M.toast({html: `Team favorit berhasil di hapus`}, 3000);
             } else {
                 dbInsert(teamData)
                 icon.innerHTML = 'delete'
                 showNotifikasiSimpan()
+                M.toast({html: 'Team favorit berhasil di simpan'}, 3000);
             }
         };
     });

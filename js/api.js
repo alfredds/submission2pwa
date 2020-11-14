@@ -4,6 +4,7 @@ const base_URL = "https://api.football-data.org/v2/";
 const LEAGUE_ID = 2021;
 
 const ENDPOINT_COMPETITION = `${base_URL}competitions/${LEAGUE_ID}/teams`;
+const ENDPOINT_STANDING = `${base_URL}competitions/${LEAGUE_ID}/standings`;
 
 
 const fetchAPI = url => {
@@ -130,7 +131,7 @@ function showTeamById(squads){
 
     squads.squad.forEach(player =>{
         squad += ` 
-                <tr>
+                <tr class="centered">
                     <td>${player.id}</td>
                     <td>${player.name}</td>
                     <td>${player.position}</td>
@@ -150,11 +151,11 @@ function showTeamById(squads){
             <table class="striped responsive-table">
             <thead>
                     <tr id="squad">
-                        <th class="center">ID</th>
-                        <th class="center">Nama</th>
-                        <th class="center">Posisi</th>
-                        <th class="center">Kebangsaan</th>
-                        <th class="center">Jabatan</th>
+                        <th class="centered">ID</th>
+                        <th class="centered">Nama</th>
+                        <th class="centered">Posisi</th>
+                        <th class="centered">Kebangsaan</th>
+                        <th class="centered">Jabatan</th>
                     </tr>
             </thead>
                 <tbody id="squad">
@@ -174,25 +175,25 @@ function getSaveTeam(){
                 <div class="card" style="padding-left: 24px; padding-right: 24px; margin-top: 30px;>
                 <div class="row">
                     <div class="card-content small" style="text-align: center;">
-                    <a href="./squad.html?id=${team.id}>
+                    <a href="./squad.html?id=${team.id}">
                         <img class="responsive-image" src="${team.crestUrl.replace(/^http:\/\//i,'https://')}" width="50px" alt="badge/>
                     </a>
                     <h2 class="center responsive-text">${team.name}</h2>
                 </div>
-                <table class="striped responsive-table">
+                <table class="striped centered responsive-table">
                     <thead>
                         <tr>
-                            <th class="center">ID</th>
-                            <th class="center">Nama</th>
-                            <th class="center">Posisi</th>
-                            <th class="center">Kebangsaan</th>
-                            <th class="center">Jabatan</th>
+                            <th class="centered">ID</th>
+                            <th class="centered">Nama</th>
+                            <th class="centered">Posisi</th>
+                            <th class="centered">Kebangsaan</th>
+                            <th class="centered">Jabatan</th>
                         </tr>
                 </thead>
                     <tbody id="squad">
                     ${team.squad.map(player=>(
-                        `<tr class="center">
-                            <td><a href="./squad.html?id=${player.id}&saved=true"></a><td>
+                        `<tr class="centered">
+                            <td><a href="./squad.html?id=${player.id}&saved=true">${player.id}</a><td>
                             <td>${player.name}</td>
                             <td>${player.position}</td>
                             <td>${player.nationality}</td>
@@ -221,25 +222,25 @@ function getSavedTeamById(){
             <div class="card" style="padding-left: 24px; padding-right: 24px; margin-top: 30px;>
                 <div class="row">
                     <div class="card-content small" style="text-align: center;">
-                    <a href="./squad.html?id=${team.id}>
+                    <a href="./squad.html?id=${team.id}">
                         <img class="responsive-image" src="${team.crestUrl.replace(/^http:\/\//i,'https://')}" width="50px" alt="badge/>
                     </a>
                     <h2 class="center responsive-text">${team.name}</h2>
                 /div>
-            <table class="striped responsive-table">
+            <table class="striped centered responsive-table">
                 <thead>
                     <tr>
-                        <th class="center">ID</th>
-                        <th class="center">Nama</th>
-                        <th class="center">Posisi</th>
-                        <th class="center">Kebangsaan</th>
-                        <th class="center">Jabatan</th>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Posisi</th>
+                        <th>Kebangsaan</th>
+                        <th>Jabatan</th>
                     </tr>
                 </thead>
                 <tbody id="squad">
                     ${team.squad.map(player=>(
-                    `<tr class="center">
-                        <td><a href="./squad.html?id=${player.id}&saved=true"></a><td>
+                    `<tr class="centered">
+                        <td><a href="./squad.html?id=${player.id}&saved=true">${player.id}</a><td>
                         <td>${player.name}</td>
                         <td>${player.position}</td>
                         <td>${player.nationality}</td>
@@ -284,4 +285,70 @@ function showNotifikasiDelete() {
     } else {
         console.error('Fitur notifikasi tidak diijinkan.');
     }
+}
+
+//Fungsi untuk melihat papan klasemen liga inggris
+function getAllStandings(){
+    if("caches" in window) {
+        caches.match(ENDPOINT_STANDING).then(response => {
+            if(response){
+                response.json().then(stand => {
+                    console.log(`Standing Data: ${stand}`);
+                    showStanding(stand);
+                })
+            }
+        })
+    }
+
+    fetchAPI(ENDPOINT_STANDING)
+        .then(stand => {
+            showStanding(stand);
+        })
+        .catch(error => {
+            console.log(error)
+        })
+}
+
+function showStanding(stand) {
+    let standings = "";
+    let standingElement = document.getElementById("standings")
+
+    stand.standings[0].table.forEach(standing => {
+        standings += `
+                <tr>
+                    <td><img src="${standing.team.crestUrl.replace(/^http:\/\//i, 'https://')}" width="40px" alt="badge"/></td>
+                    <td class="centered">${standing.team.name}</td>
+                    <td class="centered">${standing.won}</td>
+                    <td class="centered">${standing.draw}</td>
+                    <td class="centered">${standing.lost}</td>
+                    <td class="centered">${standing.goalsFor}</td>
+                    <td class="centered">${standing.goalsAgainst}<td>
+                    <td class="centered">${standing.goalDifference}</td>
+                    <td class="centered">${standing.points}</td>
+                </tr>
+        `;
+    });
+
+    standingElement.innerHTML = `
+            <div class="card" style="padding-left: 24px; padding-right:24px; margin-top: 30px;">
+        <table class="striped responsive-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="centered">Team Name</th>
+                    <th class="centered">W</th>
+                    <th class="centered">D</th>
+                    <th class="centered">L</th>
+                    <th class="centered">GF</th>
+                    <th class="centered">GA</th>
+                    <th class="centered">GD</th>
+                    <th class="centered">Point</th>
+                </tr>
+            </thead>
+            <tbody id="standings">
+                ${standings}
+            </tbody>
+        </table>
+        </div>
+    `;
 }
